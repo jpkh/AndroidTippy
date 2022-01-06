@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import android.widget.EditText
 import android.widget.SeekBar
 import android.widget.TextView
@@ -15,6 +16,7 @@ import androidx.core.content.ContextCompat
 
 private const val TAG = "MainActivity"
 private const val INITIAL_TIP_PERCENT = 15
+
 class MainActivity : AppCompatActivity() {
     private lateinit var etBaseAmount: EditText
     private lateinit var seekBarTip: SeekBar
@@ -34,6 +36,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Initialise and retrieve all references
         etBaseAmount = findViewById(R.id.etBaseAmount)
         seekBarTip = findViewById(R.id.seekBarTip)
         tvTipPercentLabel = findViewById(R.id.tvTipPercentLabel)
@@ -46,10 +50,12 @@ class MainActivity : AppCompatActivity() {
         tvSplitValue = findViewById(R.id.tvSplitValue)
         etSplitPeople = findViewById(R.id.etSplitPeople)
 
-
+        // Initialise slider values
         seekBarTip.progress = INITIAL_TIP_PERCENT
         tvTipPercentLabel.text = "$INITIAL_TIP_PERCENT%"
         updateTipDescription(INITIAL_TIP_PERCENT)
+
+        // Check if seekBar position has changed
         seekBarTip.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 Log.i(TAG, "onProgressChanged $progress")
@@ -58,10 +64,13 @@ class MainActivity : AppCompatActivity() {
                 computeTipAndTotal()
             }
 
+            // Ignore, just for sanity
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-
+            // Ignore, just for sanity
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
+
+        // Check and react if etBaseAmount has changes
         etBaseAmount.addTextChangedListener(object: TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -72,6 +81,20 @@ class MainActivity : AppCompatActivity() {
                 computeTipAndTotal()
             }
         })
+
+        // Check and react if etBaseAmount has changes
+        etSplitPeople.addTextChangedListener(object: TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                Log.i(TAG, "afterTextChanged $s")
+                computeTipAndTotal()
+            }
+        })
+
+
         tvFooter.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/user/rpandey1234")))
         }
@@ -108,12 +131,19 @@ class MainActivity : AppCompatActivity() {
         // Compute the tip and update the UI
         val tipAmount = baseAmount * tipPercent / 100
         val totalAmount = baseAmount + tipAmount
-        tvTipAmount.text = "%.2f".format(tipAmount)
-        tvTotalAmount.text = "%.2f".format(totalAmount)
+        tvTipAmount.text = "$%.2f".format(tipAmount)
+        tvTotalAmount.text = "$%.2f".format(totalAmount)
 
         // Check if splitPeople has value
         if(etSplitPeople.text.isNotEmpty()) {
-
+            val splitValue = totalAmount / etSplitPeople.text.toString().toDouble()
+            tvSplitValue.text = "$%.2f".format(splitValue)
+            tvSplitValueLabel.visibility = View.VISIBLE
+            tvSplitValue.visibility = View.VISIBLE
+        } else {
+            tvSplitValue.text = ""
+            tvSplitValueLabel.visibility = View.INVISIBLE
+            tvSplitValue.visibility = View.INVISIBLE
         }
 
 
