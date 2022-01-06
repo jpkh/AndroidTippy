@@ -24,6 +24,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvTipDescription: TextView
     private lateinit var tvFooter: TextView
 
+    private lateinit var tvSplitPeopleLabel: TextView
+    private lateinit var tvSplitValueLabel: TextView
+    private lateinit var tvSplitValue: TextView
+    private lateinit var etSplitPeople: EditText
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,6 +41,11 @@ class MainActivity : AppCompatActivity() {
         tvTotalAmount = findViewById(R.id.tvTotalAmount)
         tvTipDescription = findViewById(R.id.tvTipDescription)
         tvFooter = findViewById(R.id.tvFooter)
+        tvSplitPeopleLabel = findViewById(R.id.tvSplitPeopleLabel)
+        tvSplitValueLabel = findViewById(R.id.tvSplitValueLabel)
+        tvSplitValue = findViewById(R.id.tvSplitValue)
+        etSplitPeople = findViewById(R.id.etSplitPeople)
+
 
         seekBarTip.progress = INITIAL_TIP_PERCENT
         tvTipPercentLabel.text = "$INITIAL_TIP_PERCENT%"
@@ -83,6 +95,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun computeTipAndTotal() {
+        // Check if etBaseAmouht is empty, return if it is or we crash
         if (etBaseAmount.text.isEmpty()) {
             tvTipAmount.text = ""
             tvTotalAmount.text = ""
@@ -97,5 +110,12 @@ class MainActivity : AppCompatActivity() {
         val totalAmount = baseAmount + tipAmount
         tvTipAmount.text = "%.2f".format(tipAmount)
         tvTotalAmount.text = "%.2f".format(totalAmount)
+
+        // Check if splitPeople has value
+        if(etSplitPeople.text.isNotEmpty()) {
+
+        }
+
+
     }
 }
